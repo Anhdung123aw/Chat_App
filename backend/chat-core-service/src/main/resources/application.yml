@@ -1,0 +1,156 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chat-core-service
+  profiles:
+    active: dev  # Dev mode - no authentication required
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: CHAT_APP
+    password: 123
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql: true
+        physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        globally_quoted_identifiers: true
+        jdbc:
+          time_zone: UTC
+        timezone:
+          default_storage: NORMALIZE
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+    out-of-order: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: chat-core-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.chatcore.*
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      # Tạm tắt Kafka để test core API trước
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/chatapp
+
+# Application security config
+app:
+  security:
+    enabled: false  # Disable security for development (no JWT required)
+
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: chat-attachments
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    com.example.chatcore: DEBUG
+    org.flywaydb: DEBUG
+
+# ============================================================================
+# Phase 2: Operations & Analytics Configuration
+# ============================================================================
+
+# SLA Configuration
+sla:
+  default:
+    first-response-time-seconds: 300  # 5 minutes default
+    resolution-time-seconds: 3600     # 1 hour default
+  monitoring:
+    enabled: true
+    check-interval-minutes: 1
+
+# Auto Assignment Configuration
+assignment:
+  strategy: SKILLS_LOAD_BALANCED  # Options: SKILLS_LOAD_BALANCED, ROUND_ROBIN, LEAST_BUSY
+  enabled: true
+  max-retries: 3
+  retry-delay-seconds: 5
+
+# Alert Configuration
+alert:
+  enabled: true
+  slack:
+    webhook-url: ${SLACK_WEBHOOK_URL:}  # Set via environment variable
+  email:
+    enabled: false
+    smtp-host: smtp.gmail.com
+    smtp-port: 587
+    recipients: ${ALERT_EMAIL_RECIPIENTS:}
+  thresholds:
+    queue-depth: 10
+    sla-breach: 5
+    low-agent-capacity: 2
+    high-wait-time-seconds: 600  # 10 minutes
+
+# Scheduler Configuration (Phase 2 Jobs)
+scheduler:
+  sla-monitoring:
+    enabled: true
+    cron: "0 * * * * ?"  # Every minute
+  sla-report:
+    enabled: true
+    cron: "0 0 * * * ?"  # Every hour
+  alert-monitoring:
+    enabled: true
+    cron: "0 0/5 * * * ?"  # Every 5 minutes
+  alert-report:
+    enabled: true
+    cron: "0 15 * * * ?"  # Every hour at minute 15
+  agent-heartbeat-check:
+    enabled: true
+    cron: "0 0/2 * * * ?"  # Every 2 minutes
+
+# Redis Configuration (Phase 2 - Optional)
+redis:
+  enabled: false  # Enable when Redis is available
+  host: localhost
+  port: 6379
+  cache:
+    ttl-seconds: 300  # 5 minutes
+    agent-status-ttl: 120  # 2 minutes
+
+# Reporting Configuration
+reporting:
+  enabled: true
+  default-date-range-days: 30
+  max-top-topics: 20

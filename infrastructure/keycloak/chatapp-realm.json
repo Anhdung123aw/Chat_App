@@ -1,0 +1,48 @@
+{
+  "realm": "chatapp",
+  "enabled": true,
+  "sslRequired": "none",
+  "roles": {
+    "realm": [
+      { "name": "user", "description": "Khách hàng dùng Customer Web / WebView" },
+      { "name": "agent", "description": "CS Agent xử lý hội thoại" },
+      { "name": "supervisor", "description": "Giám sát queue/SLA/agent" },
+      { "name": "admin", "description": "Quản trị hệ thống chat" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "chat-app",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "customer01",
+      "enabled": true,
+      "email": "customer01@example.com",
+      "credentials": [{ "type": "password", "value": "customer01", "temporary": false }],
+      "realmRoles": ["user"],
+      "attributes": { "merchantId": ["MERCHANT001"] }
+    },
+    {
+      "username": "agent01",
+      "enabled": true,
+      "email": "agent01@example.com",
+      "credentials": [{ "type": "password", "value": "agent01", "temporary": false }],
+      "realmRoles": ["agent"]
+    },
+    {
+      "username": "supervisor01",
+      "enabled": true,
+      "email": "supervisor01@example.com",
+      "credentials": [{ "type": "password", "value": "supervisor01", "temporary": false }],
+      "realmRoles": ["supervisor"]
+    }
+  ]
+}
