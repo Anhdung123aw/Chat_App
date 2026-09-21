@@ -1,0 +1,94 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <button class="btn-back" (click)="goBack()">←</button>
+    <div class="header-info">
+      @if (conversation) {
+        <div class="customer-avatar">{{ conversation.customerName.charAt(0).toUpperCase() }}</div>
+        <div class="header-details">
+          <span class="customer-name">{{ conversation.customerName }}</span>
+          <span class="conv-meta">
+            <span class="status-badge" [class]="'s-' + conversation.status.toLowerCase()">
+              {{ conversation.status }}
+            </span>
+            <span class="channel-badge">{{ conversation.channel }}</span>
+          </span>
+        </div>
+      } @else {
+        <span class="loading-name">Loading...</span>
+      }
+    </div>
+    <div class="header-actions">
+      @if (conversation && conversation.status !== 'CLOSED' && conversation.status !== 'RESOLVED') {
+        <button class="btn-close-conv" (click)="closeConversation()">Close</button>
+      }
+    </div>
+  </div>
+
+  <!-- Messages area -->
+  <div class="messages-area" #messageContainer>
+    @if (loading) {
+      <div class="loading-messages">
+        <div class="spinner"></div>
+        <span>Loading messages...</span>
+      </div>
+    }
+
+    @for (msg of messages; track msg.id) {
+      <!-- System message -->
+      @if (isSystem(msg)) {
+        <div class="system-message">{{ msg.content }}</div>
+      } @else {
+        <!-- Chat bubble -->
+        <div class="message-row" [class.mine]="isMine(msg)" [class.theirs]="!isMine(msg)">
+          @if (!isMine(msg)) {
+            <div class="msg-avatar">{{ (msg.senderName ?? 'C').charAt(0).toUpperCase() }}</div>
+          }
+          <div class="bubble">
+            <div class="bubble-content">{{ msg.content }}</div>
+            <div class="bubble-time">{{ formatTime(msg.createdAt) }}</div>
+          </div>
+        </div>
+      }
+    }
+
+    <!-- Typing indicator -->
+    @if (isTyping) {
+      <div class="message-row theirs">
+        <div class="msg-avatar">C</div>
+        <div class="bubble typing-bubble">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Canned replies panel -->
+  @if (showCannedReplies) {
+    <app-canned-replies (replySelected)="selectCannedReply($event)"></app-canned-replies>
+  }
+
+  <!-- Input area -->
+  <div class="input-area">
+    <button class="btn-icon" (click)="toggleCannedReplies()" title="Canned replies" [class.active]="showCannedReplies">
+      ⚡
+    </button>
+    <textarea
+      class="message-input"
+      [(ngModel)]="newMessage"
+      (input)="onInputChange()"
+      (keydown)="onKeydown($event)"
+      placeholder="Type a message... (Enter to send, Shift+Enter for newline)"
+      rows="1"
+    ></textarea>
+    <button class="btn-send" (click)="sendMessage()" [disabled]="!newMessage.trim() || sending">
+      @if (sending) {
+        <span class="spinner-sm"></span>
+      } @else {
+        ➤
+      }
+    </button>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="canned-panel">
+  <div class="canned-header">
+    <span class="canned-title">⚡ Quick Replies</span>
+  </div>
+
+  <div class="canned-search">
+    <input
+      type="text"
+      placeholder="Search replies..."
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      class="search-input"
+    />
+  </div>
+
+  @if (loading) {
+    <div class="canned-loading">Loading...</div>
+  } @else if (filteredReplies.length === 0) {
+    <div class="canned-empty">No replies found</div>
+  } @else {
+    <div class="canned-list">
+      @for (reply of filteredReplies; track reply.id) {
+        <div class="canned-item" (click)="selectReply(reply)">
+          <div class="reply-top">
+            <span class="reply-title">{{ reply.title }}</span>
+            <span class="reply-category">{{ reply.category }}</span>
+          </div>
+          <div class="reply-preview">{{ reply.content }}</div>
+        </div>
+      }
+    </div>
+  }
+</div>

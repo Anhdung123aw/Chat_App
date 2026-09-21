@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ConversationCreatedConsumer {
+public class    ConversationCreatedConsumer {
 
     private final AutoAssignmentService autoAssignmentService;
     private final SlaService slaService;
@@ -47,13 +47,13 @@ public class ConversationCreatedConsumer {
             boolean assigned = autoAssignmentService.autoAssignConversation(conversationId);
 
             if (assigned) {
-                log.info("✅ Successfully auto-assigned conversation: {}", conversationId);
+                log.info(" Successfully auto-assigned conversation: {}", conversationId);
             } else {
-                log.warn("⚠️ Failed to auto-assign conversation: {} (no available agent)", conversationId);
+                log.warn(" Failed to auto-assign conversation: {} (no available agent)", conversationId);
             }
 
         } catch (Exception e) {
-            log.error("❌ Error processing conversation.created event: {}", e.getMessage(), e);
+            log.error(" Error processing conversation.created event: {}", e.getMessage(), e);
             // Don't throw - continue processing other messages
         }
     }

@@ -25,6 +25,8 @@ public interface ChatConversationRepository extends JpaRepository<ChatConversati
 
     List<ChatConversationEntity> findByAssignedAgentAndStatusIn(String assignedAgent, List<ConversationStatus> statuses);
 
+    List<ChatConversationEntity> findByAssignedAgentOrderByCreatedAtDesc(String assignedAgent);
+
     @Modifying
     @Query("""
         UPDATE ChatConversationEntity c

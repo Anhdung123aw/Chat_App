@@ -38,7 +38,7 @@ public class ChatRatingEntity {
     private Integer rating;
 
     @Lob
-    @Column(name = "COMMENT")
+    @Column(name = "COMMENT_TEXT")
     @Comment("Nhận xét chi tiết từ khách hàng")
     private String comment;
 

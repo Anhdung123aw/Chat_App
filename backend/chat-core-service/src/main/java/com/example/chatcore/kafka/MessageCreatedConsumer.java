@@ -61,11 +61,11 @@ public class MessageCreatedConsumer {
             if (conversation.getFirstResponseAt() == null) {
                 conversation.setFirstResponseAt(LocalDateTime.now());
                 conversationRepository.save(conversation);
-                log.info("✅ Tracked first response for conversation: {}", conversationId);
+                log.info(" Tracked first response for conversation: {}", conversationId);
             }
 
         } catch (Exception e) {
-            log.error("❌ Error processing message.created event: {}", e.getMessage(), e);
+            log.error(" Error processing message.created event: {}", e.getMessage(), e);
             // Don't throw - continue processing other messages
         }
     }

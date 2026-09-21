@@ -100,6 +100,10 @@ public class ConversationService {
         return conversationRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
+    public List<ChatConversationEntity> listByAgent(String agentId) {
+        return conversationRepository.findByAssignedAgentOrderByCreatedAtDesc(agentId);
+    }
+
     @Transactional
     @Auditable(eventType = "CONVERSATION_ASSIGNED")
     public ChatConversationEntity assign(String conversationId, String agentId) {
@@ -108,6 +112,10 @@ public class ConversationService {
 
         if (updated == 0) {
             ChatConversationEntity existing = getById(conversationId);
+            // If already assigned to THIS agent, just return it (idempotent)
+            if (agentId.equals(existing.getAssignedAgent())) {
+                return existing;
+            }
             throw new ConversationConflictException(
                     "Conversation " + conversationId + " đã được agent khác nhận hoặc không ở trạng thái NEW (hiện tại: "
                             + existing.getStatus() + ", agent: " + existing.getAssignedAgent() + ")");

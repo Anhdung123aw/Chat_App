@@ -1,0 +1,115 @@
+<div class="overview-page">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard Overview</h1>
+      <p class="subtitle">Real-time operations summary</p>
+    </div>
+    <div class="header-right">
+      <span class="last-updated">Updated: {{ formatLastUpdated() }}</span>
+      <button class="btn-refresh" (click)="loadStats()" [disabled]="loading">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Conversation stats -->
+  <div class="section-title">Conversations</div>
+  <div class="stats-grid">
+    <div class="stat-card stat-active">
+      <div class="stat-icon">💬</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.totalActive }}</div>
+        <div class="stat-label">Active</div>
+      </div>
+    </div>
+    <div class="stat-card stat-pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.totalPending }}</div>
+        <div class="stat-label">Pending / Queue</div>
+      </div>
+    </div>
+    <div class="stat-card stat-resolved">
+      <div class="stat-icon">✅</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.totalResolved }}</div>
+        <div class="stat-label">Resolved Today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time stats -->
+  <div class="section-title">Performance</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ formatTime(stats.avgWaitingTime) }}</div>
+        <div class="stat-label">Avg Waiting Time</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🕐</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ formatTime(stats.avgHandlingTime) }}</div>
+        <div class="stat-label">Avg Handling Time</div>
+      </div>
+    </div>
+    <div class="stat-card" [class.sla-danger]="slaRate < 80" [class.sla-warning]="slaRate >= 80 && slaRate < 95">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-body">
+        <div class="stat-value">{{ slaRate }}%</div>
+        <div class="stat-label">SLA Rate</div>
+        <div class="sla-bar">
+          <div class="sla-fill" [style.width.%]="slaRate"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent stats -->
+  <div class="section-title">Agent Status</div>
+  <div class="agent-status-row">
+    <div class="agent-stat online">
+      <div class="count">{{ stats.agentsOnline }}</div>
+      <div class="label">🟢 Online</div>
+    </div>
+    <div class="agent-stat busy">
+      <div class="count">{{ stats.agentsBusy }}</div>
+      <div class="label">🔴 Busy</div>
+    </div>
+    <div class="agent-stat offline">
+      <div class="count">{{ stats.agentsOffline }}</div>
+      <div class="label">⚫ Offline</div>
+    </div>
+
+    <!-- Agent bar chart -->
+    <div class="agent-bar">
+      @if ((stats.agentsOnline + stats.agentsBusy + stats.agentsOffline) > 0) {
+        <div class="bar-online"
+          [style.width.%]="stats.agentsOnline / (stats.agentsOnline + stats.agentsBusy + stats.agentsOffline) * 100"
+          title="Online">
+        </div>
+        <div class="bar-busy"
+          [style.width.%]="stats.agentsBusy / (stats.agentsOnline + stats.agentsBusy + stats.agentsOffline) * 100"
+          title="Busy">
+        </div>
+        <div class="bar-offline"
+          [style.width.%]="stats.agentsOffline / (stats.agentsOnline + stats.agentsBusy + stats.agentsOffline) * 100"
+          title="Offline">
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- SLA detail -->
+  <div class="section-title">SLA Detail</div>
+  <div class="sla-detail">
+    <div class="sla-item met">
+      <div class="sla-count">{{ stats.slaMet }}</div>
+      <div class="sla-desc">✅ SLA Met</div>
+    </div>
+    <div class="sla-item breached">
+      <div class="sla-count">{{ stats.slaBreached }}</div>
+      <div class="sla-desc">⚠️ SLA Breached</div>
+    </div>
+  </div>
+</div>

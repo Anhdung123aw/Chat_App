@@ -1,0 +1,55 @@
+<div class="queue-page">
+  <div class="page-header">
+    <div>
+      <h1>Queue Management</h1>
+      <p class="subtitle">{{ pending.length }} conversations waiting</p>
+    </div>
+    <button class="btn-refresh" (click)="loadQueue()">↻ Refresh</button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-row"><div class="spinner"></div> Loading queue...</div>
+  } @else if (pending.length === 0) {
+    <div class="empty-queue">
+      <span>🎉</span>
+      <p>Queue is empty! All conversations are handled.</p>
+    </div>
+  } @else {
+    <div class="queue-list">
+      @for (conv of pending; track conv.id) {
+        <div class="queue-item" [class.long-wait]="isLongWaiting(conv)">
+          <div class="queue-priority" [class]="'p-' + conv.priority.toLowerCase()">
+            {{ conv.priority }}
+          </div>
+          <div class="queue-info">
+            <div class="customer-name">{{ conv.customerName }}</div>
+            <div class="queue-meta">
+              <span class="channel">{{ conv.channel }}</span>
+              <span class="wait-time" [class.warning]="isLongWaiting(conv)">
+                ⏱ {{ getWaitingMinutes(conv) }} min
+              </span>
+              @if (conv.topicCode) {
+                <span class="topic">{{ conv.topicCode }}</span>
+              }
+            </div>
+          </div>
+          <div class="assign-action">
+            <select [(ngModel)]="selectedAgentId[conv.id]" class="agent-select">
+              <option value="" disabled selected>Select agent...</option>
+              @for (agent of agents; track agent.id) {
+                <option [value]="agent.id">{{ agent.fullName }}</option>
+              }
+            </select>
+            <button
+              class="btn-assign"
+              [disabled]="!selectedAgentId[conv.id]"
+              (click)="assignToAgent(conv.id)"
+            >
+              Assign
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

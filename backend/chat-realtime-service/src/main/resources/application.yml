@@ -1,13 +1,100 @@
-server:
-  port: 8081
-
 spring:
   application:
     name: chat-realtime-service
+  
+  # WebSocket configuration
+  websocket:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5173
+      - http://localhost:4200
+    endpoint: /ws
+    message-size-limit: 128KB
+    send-time-limit: 20s
+    send-buffer-size-limit: 512KB
+  
+  # Kafka configuration
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
-      group-id: chat-realtime-group
+      group-id: chat-realtime-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
+  # Redis configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 60000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 2000ms
+  
+  # Security (disable for development)
+  security:
+    enabled: false  # Enable in production
+
+server:
+  port: 8083
+  shutdown: graceful
+
+# Actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.example.realtime: DEBUG
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG
+    org.springframework.kafka: INFO
+    io.lettuce: INFO
+
+# Custom configuration
+chat:
+  realtime:
+    # Connection management
+    heartbeat-interval-seconds: 30
+    connection-timeout-seconds: 300
+    max-connections-per-user: 5
+    
+    # Message delivery
+    delivery-timeout-seconds: 10
+    retry-attempts: 3
+    
+    # Presence tracking
+    presence-ttl-seconds: 300
+    presence-update-interval-seconds: 60
+    
+    # Redis channels
+    redis:
+      message-channel-prefix: "chat:message:"
+      typing-channel-prefix: "chat:typing:"
+      presence-channel-prefix: "chat:presence:"
+      connection-key-prefix: "chat:connection:"
+    
+    # Kafka topics
+    kafka:
+      topics:
+        message-created: chat.message.created
+        conversation-assigned: chat.conversation.assigned
+        conversation-status-changed: chat.conversation.status-changed
+        agent-status-changed: chat.agent.status-changed

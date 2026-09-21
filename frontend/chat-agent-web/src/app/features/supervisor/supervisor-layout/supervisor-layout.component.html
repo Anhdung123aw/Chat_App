@@ -1,0 +1,43 @@
+<div class="supervisor-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>📊 Supervisor</h2>
+      <div class="ws-status" [class.connected]="wsConnected">
+        <span class="dot"></span>
+        <span>{{ wsConnected ? 'Live' : 'Offline' }}</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/supervisor/overview" routerLinkActive="active" class="nav-item">
+        <span class="icon">🏠</span><span>Overview</span>
+      </a>
+      <a routerLink="/supervisor/agents" routerLinkActive="active" class="nav-item">
+        <span class="icon">👥</span><span>Agents</span>
+      </a>
+      <a routerLink="/supervisor/queue" routerLinkActive="active" class="nav-item">
+        <span class="icon">📋</span><span>Queue</span>
+      </a>
+      <a routerLink="/supervisor/reports" routerLinkActive="active" class="nav-item">
+        <span class="icon">📈</span><span>Reports</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      @if (currentUser) {
+        <div class="user-info">
+          <div class="avatar">{{ currentUser.fullName.charAt(0).toUpperCase() }}</div>
+          <div class="details">
+            <div class="name">{{ currentUser.fullName }}</div>
+            <div class="role">{{ currentUser.role }}</div>
+          </div>
+        </div>
+        <button (click)="logout()" class="btn-logout">Logout</button>
+      }
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

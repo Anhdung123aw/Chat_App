@@ -1,0 +1,106 @@
+<div class="reports-page">
+  <div class="page-header">
+    <div>
+      <h1>Reports & Analytics</h1>
+      <p class="subtitle">Performance insights for your team</p>
+    </div>
+    <div class="date-filter">
+      <input type="date" [(ngModel)]="dateFrom" class="date-input" />
+      <span>to</span>
+      <input type="date" [(ngModel)]="dateTo" class="date-input" />
+      <button class="btn-apply">Apply</button>
+    </div>
+  </div>
+
+  <!-- Summary KPIs -->
+  <div class="section-title">Key Metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon">💬</div>
+      <div class="kpi-value">{{ summary.totalConversations }}</div>
+      <div class="kpi-label">Total Conversations</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-value">{{ summary.resolved }}</div>
+      <div class="kpi-label">Resolved</div>
+    </div>
+    <div class="kpi-card" [class.kpi-danger]="summary.slaRate < 80">
+      <div class="kpi-icon">🎯</div>
+      <div class="kpi-value">{{ summary.slaRate }}%</div>
+      <div class="kpi-label">SLA Rate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⏱️</div>
+      <div class="kpi-value">{{ summary.avgHandlingTime }}m</div>
+      <div class="kpi-label">Avg Handle Time</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">⏳</div>
+      <div class="kpi-value">{{ summary.avgWaitingTime }}m</div>
+      <div class="kpi-label">Avg Wait Time</div>
+    </div>
+    <div class="kpi-card kpi-csat">
+      <div class="kpi-icon">⭐</div>
+      <div class="kpi-value">{{ summary.customerSatisfaction }}/5</div>
+      <div class="kpi-label">CSAT Score</div>
+    </div>
+  </div>
+
+  <!-- Daily trend bar chart -->
+  <div class="section-title">Daily Volume (Last 7 Days)</div>
+  <div class="chart-card">
+    <div class="bar-chart">
+      @for (d of dailyTrend; track d.day) {
+        <div class="bar-group">
+          <div class="bars">
+            <div class="bar-total"   [style.height.%]="d.total    / maxDailyTotal * 100" title="Total: {{ d.total }}"></div>
+            <div class="bar-resolved"[style.height.%]="d.resolved / maxDailyTotal * 100" title="Resolved: {{ d.resolved }}"></div>
+          </div>
+          <div class="bar-label">{{ d.day }}</div>
+        </div>
+      }
+    </div>
+    <div class="chart-legend">
+      <span class="legend-dot total"></span> Total
+      <span class="legend-dot resolved"></span> Resolved
+    </div>
+  </div>
+
+  <div class="two-cols">
+    <!-- Channel breakdown -->
+    <div>
+      <div class="section-title">Channel Breakdown</div>
+      <div class="table-card">
+        @for (ch of channelStats; track ch.channel) {
+          <div class="table-row">
+            <div class="ch-name">{{ ch.channel }}</div>
+            <div class="ch-bar-wrap">
+              <div class="ch-bar" [style.width.%]="ch.pct"></div>
+            </div>
+            <div class="ch-count">{{ ch.count }}</div>
+            <div class="ch-pct">{{ ch.pct }}%</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Top agents -->
+    <div>
+      <div class="section-title">Top Performing Agents</div>
+      <div class="table-card">
+        <div class="table-head">
+          <div>Agent</div><div>Resolved</div><div>SLA</div><div>Avg Time</div>
+        </div>
+        @for (agent of topAgents; track agent.name) {
+          <div class="table-row agent-row">
+            <div class="a-name">{{ agent.name }}</div>
+            <div class="a-num">{{ agent.resolved }}</div>
+            <div class="a-num" [class.good]="agent.slaRate >= 95">{{ agent.slaRate }}%</div>
+            <div class="a-num">{{ agent.avgTime }}m</div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

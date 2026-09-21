@@ -1,0 +1,101 @@
+<div class="login-container">
+  <div class="login-card">
+
+    <div class="login-header">
+      <h1>💬 Chat Agent Portal</h1>
+      <p>Development Mode — No password required</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="activeTab === 'new'" (click)="activeTab = 'new'; errorMessage = ''">
+        Create New Agent
+      </button>
+      <button [class.active]="activeTab === 'existing'" (click)="activeTab = 'existing'; errorMessage = ''">
+        Use Existing Agent
+      </button>
+    </div>
+
+    <!-- === Tab: Tạo agent mới === -->
+    @if (activeTab === 'new') {
+      <form (ngSubmit)="createAndLogin()" class="login-form">
+        <p class="hint">Creates a new agent in the database and logs in automatically.</p>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="newAgentName" name="newAgentName"
+                 class="form-control" placeholder="e.g. Nguyen Van Agent" [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="newAgentEmail" name="newAgentEmail"
+                 class="form-control" placeholder="e.g. agent@company.com" [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select [(ngModel)]="newAgentRole" name="newAgentRole" class="form-control" [disabled]="loading">
+            <option value="AGENT">Agent — access Agent Console</option>
+            <option value="SUPERVISOR">Supervisor — access Dashboard</option>
+          </select>
+        </div>
+
+        @if (errorMessage) {
+          <div class="alert alert-error">{{ errorMessage }}</div>
+        }
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          @if (loading) { <span class="spinner-sm"></span> Creating... }
+          @else { 🚀 Create Agent & Login }
+        </button>
+      </form>
+    }
+
+    <!-- === Tab: Dùng agent có sẵn === -->
+    @if (activeTab === 'existing') {
+      <form (ngSubmit)="loginExisting()" class="login-form">
+        <p class="hint">Use an existing Agent ID from the database (CHAT_AGENT table).</p>
+
+        <div class="form-group">
+          <label>Agent ID</label>
+          <input type="text" [(ngModel)]="existingAgentId" name="existingAgentId"
+                 class="form-control" placeholder="Paste agentId from backend"
+                 [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label>Display Name</label>
+          <input type="text" [(ngModel)]="existingAgentName" name="existingAgentName"
+                 class="form-control" placeholder="Your name (for display)"
+                 [disabled]="loading" />
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select [(ngModel)]="existingRole" name="existingRole" class="form-control" [disabled]="loading">
+            <option value="AGENT">Agent</option>
+            <option value="SUPERVISOR">Supervisor</option>
+          </select>
+        </div>
+
+        @if (errorMessage) {
+          <div class="alert alert-error">{{ errorMessage }}</div>
+        }
+
+        <button type="submit" class="btn-submit" [disabled]="loading">
+          @if (loading) { <span class="spinner-sm"></span> Logging in... }
+          @else { ➤ Login }
+        </button>
+      </form>
+    }
+
+    <!-- Backend info -->
+    <div class="backend-info">
+      <p>📡 Backend: <code>http://localhost:8080</code></p>
+      <p>⚡ Realtime: <code>http://localhost:8083</code></p>
+      <p>🔓 Security disabled in dev — no JWT needed</p>
+    </div>
+
+  </div>
+</div>

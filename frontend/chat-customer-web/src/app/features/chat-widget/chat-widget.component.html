@@ -1,0 +1,77 @@
+<!-- Landing page minh họa cho trang Web Khách hàng -->
+@if (!isWebViewMode) {
+  <div class="demo-page">
+    <header class="demo-header">
+      <h2>🏪 Cửa Hàng Trực Tuyến Demo</h2>
+      <p>Trang web minh họa việc nhúng Chat Widget dành cho Khách hàng</p>
+    </header>
+    
+    <div class="demo-content">
+      <div class="card">
+        <h3>📦 Sản phẩm đơn hàng #12345</h3>
+        <p>Trạng thái: Đang xử lý</p>
+        <p>Cần hỗ trợ về sản phẩm hoặc đơn hàng? Bấm nút 💬 ở góc dưới bên phải màn hình để chat trực tiếp với nhân viên hỗ trợ.</p>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Floating Action Button cho Browser Mode -->
+@if (!isWebViewMode) {
+  <button class="chat-launcher-btn" (click)="toggleWidget()">
+    @if (!isOpen) {
+      <span>💬</span>
+    } @else {
+      <span>✖</span>
+    }
+  </button>
+}
+
+<!-- Container Chat Widget -->
+<div class="chat-container" [class.open]="isOpen" [class.webview]="isWebViewMode">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="agent-info">
+      <div class="avatar">🎧</div>
+      <div>
+        <div class="title">Hỗ Trợ Khách Hàng</div>
+        @if (agentTyping) {
+          <div class="subtitle">Agent đang soạn tin...</div>
+        } @else {
+          <div class="subtitle">Trực tuyến</div>
+        }
+      </div>
+    </div>
+    @if (!isWebViewMode) {
+      <button class="close-btn" (click)="toggleWidget()">✖</button>
+    }
+  </div>
+
+  <!-- Messages Body -->
+  <div class="chat-body">
+    @if (loading) {
+      <div class="loading-spinner">Đang kết nối...</div>
+    }
+
+    @for (msg of messages; track msg.id) {
+      <div class="message-wrapper" [class.outgoing]="msg.senderType === SenderType.USER">
+        <div class="message-bubble">
+          {{ msg.content }}
+        </div>
+        <div class="message-time">{{ msg.createdAt | date:'HH:mm' }}</div>
+      </div>
+    }
+  </div>
+
+  <!-- Input Footer -->
+  <div class="chat-footer">
+    <input 
+      type="text" 
+      placeholder="Nhập tin nhắn..." 
+      [(ngModel)]="inputMessage" 
+      (keyup.enter)="sendMessage()"
+      [disabled]="loading"
+    />
+    <button (click)="sendMessage()" [disabled]="!inputMessage.trim()">📤</button>
+  </div>
+</div>

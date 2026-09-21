@@ -17,13 +17,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @Component
-@ConditionalOnBean(KafkaTemplate.class)
 @RequiredArgsConstructor
 @Slf4j
 public class OutboxPublisher {
 
     private final ChatOutboxRepository outboxRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate kafkaTemplate;
 
     @Scheduled(fixedDelay = 1000)
     @Transactional

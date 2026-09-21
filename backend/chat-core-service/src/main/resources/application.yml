@@ -34,7 +34,7 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
     validate-on-migrate: true
-    out-of-order: false
+    out-of-order: true
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -52,8 +52,7 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
-      # Tạm tắt Kafka để test core API trước
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+      # Kafka đã được bật lại để hỗ trợ realtime messaging
 
   security:
     oauth2:

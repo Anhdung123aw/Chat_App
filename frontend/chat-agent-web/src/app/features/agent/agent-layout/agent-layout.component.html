@@ -1,0 +1,23 @@
+<div class="agent-layout">
+  <!-- Narrow left nav -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">💬</div>
+    <nav class="sidebar-nav">
+      <a routerLink="/agent/conversations" routerLinkActive="active" title="Conversations" class="nav-btn">📋</a>
+    </nav>
+    <div class="sidebar-bottom">
+      @if (currentUser) {
+        <div class="user-avatar-small" [title]="currentUser.fullName">
+          {{ currentUser.fullName.charAt(0).toUpperCase() }}
+        </div>
+      }
+      <div class="ws-dot" [class.connected]="wsConnected" [title]="wsConnected ? 'Connected' : 'Disconnected'"></div>
+      <button (click)="logout()" class="btn-logout-sm" title="Logout">⏏</button>
+    </div>
+  </aside>
+
+  <!-- Conversation list + chat panel -->
+  <div class="agent-workspace">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -32,9 +32,16 @@ public class ConversationController {
         return ConversationResponse.from(conversationService.getById(conversationId));
     }
 
-    @GetMapping
+    @GetMapping(params = "userId")
     public List<ConversationResponse> listByUser(@RequestParam("userId") String userId) {
         return conversationService.listByUser(userId).stream()
+                .map(ConversationResponse::from)
+                .toList();
+    }
+
+    @GetMapping(params = "agentId")
+    public List<ConversationResponse> listByAgent(@RequestParam("agentId") String agentId) {
+        return conversationService.listByAgent(agentId).stream()
                 .map(ConversationResponse::from)
                 .toList();
     }
@@ -47,14 +54,12 @@ public class ConversationController {
     }
 
     @PostMapping("/{id}/assign")
-    @PreAuthorize("hasAnyRole('agent','supervisor','admin')")
     public ConversationResponse assign(@PathVariable("id") String conversationId,
                                        @Valid @RequestBody AssignRequest request) {
         return ConversationResponse.from(conversationService.assign(conversationId, request.agentId()));
     }
 
     @PostMapping("/{id}/close")
-    @PreAuthorize("hasAnyRole('agent','supervisor','admin')")
     public ConversationResponse close(@PathVariable("id") String conversationId) {
         return ConversationResponse.from(conversationService.close(conversationId));
     }
@@ -67,7 +72,6 @@ public class ConversationController {
     }
 
     @PostMapping("/{id}/transfer")
-    @PreAuthorize("hasAnyRole('agent','supervisor','admin')")
     public ConversationResponse transfer(@PathVariable("id") String conversationId,
                                          @Valid @RequestBody TransferRequest request) {
         return ConversationResponse.from(

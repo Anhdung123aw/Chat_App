@@ -1,0 +1,96 @@
+<div class="conv-list-container">
+  <!-- Header -->
+  <div class="list-header">
+    <h2>Conversations</h2>
+    <button class="btn-refresh" (click)="loadConversations()" title="Refresh">↻</button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Search by name or ID..."
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      class="search-input"
+    />
+    <span class="search-icon">🔍</span>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-tabs">
+    <button [class.active]="selectedFilter === 'ALL'" (click)="setFilter('ALL')">
+      All <span class="badge">{{ conversations.length }}</span>
+    </button>
+    <button [class.active]="selectedFilter === 'ACTIVE'" (click)="setFilter('ACTIVE')">
+      Active <span class="badge badge-active">{{ countByStatus('ACTIVE') }}</span>
+    </button>
+    <button [class.active]="selectedFilter === 'PENDING'" (click)="setFilter('PENDING')">
+      Pending <span class="badge badge-pending">{{ countByStatus('PENDING') }}</span>
+    </button>
+    <button [class.active]="selectedFilter === 'WAITING'" (click)="setFilter('WAITING')">
+      Waiting <span class="badge badge-waiting">{{ countByStatus('WAITING') }}</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading conversations...</span>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading && filteredConversations.length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">💬</span>
+      <p>No conversations found</p>
+    </div>
+  }
+
+  <!-- Conversation list -->
+  @if (!loading && filteredConversations.length > 0) {
+    <div class="conv-list">
+      @for (conv of filteredConversations; track conv.id) {
+        <div
+          class="conv-item"
+          [class.selected]="selectedConversationId === conv.id"
+          [class.has-unread]="(conv.unreadCount ?? 0) > 0"
+          (click)="openChat(conv)"
+        >
+          <!-- Avatar -->
+          <div class="conv-avatar" [class]="getPriorityClass(conv.priority)">
+            {{ conv.customerName.charAt(0).toUpperCase() }}
+          </div>
+
+          <!-- Info -->
+          <div class="conv-info">
+            <div class="conv-top">
+              <span class="customer-name">{{ conv.customerName }}</span>
+              <span class="conv-time">{{ getWaitingTime(conv) }}</span>
+            </div>
+            <div class="conv-bottom">
+              <span class="conv-status" [class]="'status-' + conv.status.toLowerCase()">
+                {{ getStatusLabel(conv.status) }}
+              </span>
+              <span class="conv-channel">{{ conv.channel }}</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="conv-actions">
+            @if (conv.unreadCount && conv.unreadCount > 0) {
+              <span class="unread-badge">{{ conv.unreadCount }}</span>
+            }
+            @if (conv.status === ConversationStatus.PENDING) {
+              <button class="btn-accept" (click)="acceptConversation($event, conv.id)">
+                Accept
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
