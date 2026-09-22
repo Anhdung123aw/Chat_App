@@ -78,6 +78,11 @@ export class WebSocketService {
       this.handleIncomingMessage(message);
     });
 
+    // Subscribe to global broadcast
+    this.client.subscribe(`/topic/broadcast`, (message: IMessage) => {
+      this.handleIncomingMessage(message);
+    });
+
     console.log('WebSocket subscriptions setup complete');
   }
 

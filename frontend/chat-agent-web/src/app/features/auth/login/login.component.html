@@ -3,7 +3,6 @@
 
     <div class="login-header">
       <h1>💬 Chat Agent Portal</h1>
-      <p>Development Mode — No password required</p>
     </div>
 
     <!-- Tabs -->
@@ -19,7 +18,7 @@
     <!-- === Tab: Tạo agent mới === -->
     @if (activeTab === 'new') {
       <form (ngSubmit)="createAndLogin()" class="login-form">
-        <p class="hint">Creates a new agent in the database and logs in automatically.</p>
+
 
         <div class="form-group">
           <label>Full Name</label>
@@ -47,7 +46,7 @@
 
         <button type="submit" class="btn-submit" [disabled]="loading">
           @if (loading) { <span class="spinner-sm"></span> Creating... }
-          @else { 🚀 Create Agent & Login }
+          @else {  Create Agent & Login }
         </button>
       </form>
     }

@@ -2,14 +2,11 @@
 @if (!isWebViewMode) {
   <div class="demo-page">
     <header class="demo-header">
-      <h2>🏪 Cửa Hàng Trực Tuyến Demo</h2>
       <p>Trang web minh họa việc nhúng Chat Widget dành cho Khách hàng</p>
     </header>
-    
+
     <div class="demo-content">
       <div class="card">
-        <h3>📦 Sản phẩm đơn hàng #12345</h3>
-        <p>Trạng thái: Đang xử lý</p>
         <p>Cần hỗ trợ về sản phẩm hoặc đơn hàng? Bấm nút 💬 ở góc dưới bên phải màn hình để chat trực tiếp với nhân viên hỗ trợ.</p>
       </div>
     </div>
@@ -65,10 +62,10 @@
 
   <!-- Input Footer -->
   <div class="chat-footer">
-    <input 
-      type="text" 
-      placeholder="Nhập tin nhắn..." 
-      [(ngModel)]="inputMessage" 
+    <input
+      type="text"
+      placeholder="Nhập tin nhắn..."
+      [(ngModel)]="inputMessage"
       (keyup.enter)="sendMessage()"
       [disabled]="loading"
     />
