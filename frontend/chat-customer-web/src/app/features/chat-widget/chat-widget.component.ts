@@ -123,8 +123,8 @@ export class ChatWidgetComponent implements OnInit, OnDestroy {
   loadHistory(): void {
     if (!this.conversationId) return;
     this.apiService.getMessages(this.conversationId).subscribe({
-      next: (res: { content: ChatMessage[] }) => {
-        this.messages = res.content || [];
+      next: (res: ChatMessage[]) => {
+        this.messages = res || [];
         this.loading = false;
       },
       error: () => { this.loading = false; }
@@ -165,18 +165,6 @@ export class ChatWidgetComponent implements OnInit, OnDestroy {
       senderType: SenderType.USER,
       clientMessageId: 'msg-' + Date.now()
     };
-
-    const tempMsg: ChatMessage = {
-      id: req.clientMessageId,
-      conversationId: this.conversationId,
-      content: text,
-      messageType: MessageType.TEXT,
-      senderType: SenderType.USER,
-      senderId: this.userId,
-      sequence: this.messages.length + 1,
-      createdAt: new Date().toISOString()
-    };
-    this.messages.push(tempMsg);
 
     this.apiService.sendMessage(req).subscribe({
       error: (err: any) => {

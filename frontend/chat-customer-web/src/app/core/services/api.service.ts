@@ -21,8 +21,8 @@ export class ApiService {
   /**
    * Lấy lịch sử tin nhắn của cuộc trò chuyện
    */
-  getMessages(conversationId: string): Observable<{ content: ChatMessage[] }> {
-    return this.http.get<{ content: ChatMessage[] }>(`${this.CORE_URL}/conversations/${conversationId}/messages`);
+  getMessages(conversationId: string): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`${this.CORE_URL}/conversations/${conversationId}/messages`);
   }
 
   /**
