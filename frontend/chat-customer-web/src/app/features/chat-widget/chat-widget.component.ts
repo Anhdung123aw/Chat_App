@@ -79,6 +79,15 @@ export class ChatWidgetComponent implements OnInit, OnDestroy {
     this.listenMessages();
     this.loadHistory();
 
+    if (this.conversationId) {
+      this.apiService.getConversation(this.conversationId).subscribe(res => {
+        if (res.status === 'CLOSED') {
+          this.isClosed = true;
+          this.checkRatingStatus();
+        }
+      });
+    }
+
     this.wsService.connect(this.userId);
     const connSub = this.wsService.isConnected().subscribe(connected => {
       if (connected && this.conversationId) {
@@ -131,6 +140,11 @@ export class ChatWidgetComponent implements OnInit, OnDestroy {
     });
   }
 
+  isClosed = false;
+  hasRated = false;
+  selectedRating = 5;
+  ratingComment = '';
+
   listenMessages(): void {
     this.subs.add(
       this.wsService.getMessages().subscribe((msg: ChatMessage) => {
@@ -149,6 +163,54 @@ export class ChatWidgetComponent implements OnInit, OnDestroy {
         }
       })
     );
+
+    this.subs.add(
+      this.wsService.getConversationClosed().subscribe((closedConvId: string) => {
+        if (closedConvId === this.conversationId) {
+          this.isClosed = true;
+          this.checkRatingStatus();
+        }
+      })
+    );
+  }
+
+  checkRatingStatus(): void {
+    if (!this.conversationId) return;
+    this.apiService.getRatingByConversation?.(this.conversationId).subscribe({
+      next: (res: any) => {
+        if (res && res.rating) {
+          this.hasRated = true;
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  setRating(val: number): void {
+    this.selectedRating = val;
+  }
+
+  submitRating(): void {
+    if (!this.conversationId) return;
+    this.loading = true;
+    this.apiService.submitRating(this.conversationId, this.selectedRating, this.ratingComment).subscribe({
+      next: () => {
+        this.loading = false;
+        this.hasRated = true;
+        
+        // Tự động đóng widget sau 1.5 giây
+        setTimeout(() => {
+          this.clearSession();
+        }, 1500);
+      },
+      error: (err: any) => {
+        console.error('Failed to submit rating', err);
+        this.loading = false;
+        // Fallback: nếu lỗi (VD: đã đánh giá rồi), cũng cho phép đóng
+        alert('Có lỗi xảy ra hoặc bạn đã đánh giá cuộc trò chuyện này rồi.');
+        this.clearSession();
+      }
+    });
   }
 
   sendMessage(): void {

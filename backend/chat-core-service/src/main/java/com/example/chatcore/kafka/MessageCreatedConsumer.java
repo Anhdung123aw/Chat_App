@@ -24,11 +24,6 @@ public class MessageCreatedConsumer {
 
     private final ChatConversationRepository conversationRepository;
     private final ObjectMapper objectMapper;
-
-    /**
-     * Consume event chat.message.created
-     * Track first response time để tính SLA
-     */
     @KafkaListener(
             topics = "chat.message.created",
             groupId = "chat-core-sla-tracking",

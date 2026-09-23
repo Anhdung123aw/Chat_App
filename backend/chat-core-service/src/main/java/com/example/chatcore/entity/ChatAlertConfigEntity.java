@@ -26,25 +26,20 @@ public class ChatAlertConfigEntity {
 
     @Id
     @Column(name = "ALERT_ID", length = 50)
-    @Comment("ID duy nhất của cấu hình cảnh báo")
     private String alertId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ALERT_TYPE", length = 50, nullable = false)
-    @Comment("Loại cảnh báo: QUEUE_DEPTH, SLA_BREACH, LOW_AGENT_CAPACITY, HIGH_WAIT_TIME")
     private AlertType alertType;
 
     @Column(name = "THRESHOLD", nullable = false)
-    @Comment("Ngưỡng kích hoạt cảnh báo")
     private Integer threshold;
 
     @Column(name = "NOTIFICATION_CHANNELS", length = 200)
-    @Comment("Kênh thông báo (JSON): [\"slack\", \"email\", \"webhook\"]")
     private String notificationChannels;
 
     @Column(name = "ENABLED", nullable = false)
     @Builder.Default
-    @Comment("Cảnh báo có đang kích hoạt không")
     private Boolean enabled = true;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)

@@ -19,52 +19,17 @@ import java.util.Map;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WebSocketMessage {
-
-    /**
-     * Message type
-     */
     private MessageType type;
-
-    /**
-     * Unique event ID
-     */
     private String eventId;
-
-    /**
-     * Conversation ID (if applicable)
-     */
     private String conversationId;
-
-    /**
-     * Sequence number (for message ordering)
-     */
     private Long sequence;
-
-    /**
-     * Timestamp
-     */
     private LocalDateTime timestamp;
-
-    /**
-     * Payload (flexible for different message types)
-     */
     private Map<String, Object> payload;
-
-    /**
-     * Sender information
-     */
     private String senderId;
     private String senderType; // USER, AGENT, SYSTEM
-
-    /**
-     * Error information (if type = ERROR)
-     */
     private String errorCode;
     private String errorMessage;
 
-    /**
-     * Message types supported by WebSocket
-     */
     public enum MessageType {
         // Connection
         CONNECT,

@@ -26,20 +26,16 @@ public class ChatRatingEntity {
 
     @Id
     @Column(name = "RATING_ID", length = 50)
-    @Comment("ID duy nhất của rating")
     private String ratingId;
 
     @Column(name = "CONVERSATION_ID", length = 50, nullable = false, unique = true)
-    @Comment("Conversation được đánh giá (1 conversation chỉ rate 1 lần)")
     private String conversationId;
 
     @Column(name = "RATING", nullable = false)
-    @Comment("Điểm đánh giá từ 1-5 (1: rất không hài lòng, 5: rất hài lòng)")
     private Integer rating;
 
     @Lob
     @Column(name = "COMMENT_TEXT")
-    @Comment("Nhận xét chi tiết từ khách hàng")
     private String comment;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)

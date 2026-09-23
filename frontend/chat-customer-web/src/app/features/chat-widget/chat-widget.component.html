@@ -60,15 +60,37 @@
     }
   </div>
 
-  <!-- Input Footer -->
-  <div class="chat-footer">
-    <input
-      type="text"
-      placeholder="Nhập tin nhắn..."
-      [(ngModel)]="inputMessage"
-      (keyup.enter)="sendMessage()"
-      [disabled]="loading"
-    />
-    <button (click)="sendMessage()" [disabled]="!inputMessage.trim()">📤</button>
-  </div>
+  <!-- Input Footer or Rating UI -->
+  @if (!isClosed) {
+    <div class="chat-footer">
+      <input
+        type="text"
+        placeholder="Nhập tin nhắn..."
+        [(ngModel)]="inputMessage"
+        (keyup.enter)="sendMessage()"
+        [disabled]="loading"
+      />
+      <button (click)="sendMessage()" [disabled]="!inputMessage.trim()">📤</button>
+    </div>
+  } @else {
+    <div class="rating-footer">
+      @if (!hasRated) {
+        <div class="rating-prompt">Cuộc trò chuyện đã kết thúc. Vui lòng đánh giá:</div>
+        <div class="stars">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+            <span class="star" [class.selected]="star <= selectedRating" (click)="setRating(star)">★</span>
+          }
+        </div>
+        <textarea placeholder="Để lại nhận xét (không bắt buộc)..." [(ngModel)]="ratingComment"></textarea>
+        <button class="btn-submit-rating" (click)="submitRating()" [disabled]="loading">
+          {{ loading ? 'Đang gửi...' : 'Gửi đánh giá' }}
+        </button>
+      } @else {
+        <div class="rating-thankyou">
+          <p>Cảm ơn bạn đã đánh giá!</p>
+          <button class="btn-new-chat" (click)="clearSession()">Đóng & Bắt đầu Chat Mới</button>
+        </div>
+      }
+    </div>
+  }
 </div>

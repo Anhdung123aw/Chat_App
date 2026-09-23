@@ -12,6 +12,7 @@ export class WebSocketService {
   private connected$ = new BehaviorSubject<boolean>(false);
   private messages$ = new Subject<ChatMessage>();
   private typingIndicators$ = new Subject<{ conversationId: string; isTyping: boolean }>();
+  private conversationClosed$ = new Subject<string>();
 
   private readonly WS_URL = 'http://localhost:8083/ws'; // chat-realtime-service
 
@@ -57,6 +58,8 @@ export class WebSocketService {
             conversationId: data.conversationId,
             isTyping: data.type === 'TYPING_START'
           });
+        } else if (data.type === 'CONVERSATION_CLOSED') {
+          this.conversationClosed$.next(data.conversationId);
         } else if (data.type === 'MESSAGE' || data.type === 'MESSAGE_CREATED') {
           const chatMsg: ChatMessage = data.payload || data;
           console.log('Customer WS: New chat message:', chatMsg);
@@ -82,6 +85,10 @@ export class WebSocketService {
 
   getTypingIndicators(): Observable<{ conversationId: string; isTyping: boolean }> {
     return this.typingIndicators$.asObservable();
+  }
+
+  getConversationClosed(): Observable<string> {
+    return this.conversationClosed$.asObservable();
   }
 
   isConnected(): Observable<boolean> {

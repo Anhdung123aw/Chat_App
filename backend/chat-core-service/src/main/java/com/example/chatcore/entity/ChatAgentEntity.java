@@ -26,39 +26,31 @@ import java.time.LocalDateTime;
 public class ChatAgentEntity {
 
     @Id
-    @Column(name = "AGENT_ID", length = 50)
-    @Comment("ID duy nhất của agent")
+    @Column
     private String agentId;
 
     @Column(name = "AGENT_NAME", length = 100, nullable = false)
-    @Comment("Tên hiển thị của agent")
     private String agentName;
 
     @Column(name = "EMAIL", length = 100)
-    @Comment("Email của agent")
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", length = 20, nullable = false)
-    @Comment("Trạng thái agent: ONLINE, OFFLINE, BUSY, AWAY")
     private AgentStatus status;
 
     @Column(name = "SKILLS", length = 500)
-    @Comment("Danh sách kỹ năng/topic agent xử lý (JSON array)")
     private String skills; // JSON: ["ORDER_SUPPORT", "PAYMENT"]
 
     @Column(name = "MAX_CONCURRENT_CHATS", nullable = false)
     @Builder.Default
-    @Comment("Số lượng chat tối đa agent có thể xử lý cùng lúc")
     private Integer maxConcurrentChats = 5;
 
     @Column(name = "CURRENT_CHAT_COUNT", nullable = false)
     @Builder.Default
-    @Comment("Số lượng chat hiện tại agent đang xử lý")
     private Integer currentChatCount = 0;
 
     @Column(name = "LAST_ACTIVE_AT")
-    @Comment("Thời điểm agent hoạt động lần cuối")
     private LocalDateTime lastActiveAt;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)

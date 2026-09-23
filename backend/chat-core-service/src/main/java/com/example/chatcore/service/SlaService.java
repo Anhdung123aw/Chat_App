@@ -26,9 +26,6 @@ public class SlaService {
     private final ChatSlaConfigRepository slaConfigRepository;
     private final ChatConversationRepository conversationRepository;
 
-    /**
-     * Tạo SLA config mới
-     */
     @Transactional
     public SlaConfigResponse createSlaConfig(CreateSlaConfigRequest request) {
         log.info("Creating SLA config for topicCode: {}", request.topic());

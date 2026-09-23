@@ -1,8 +1,5 @@
 package com.example.chatcore.exception;
 
-/**
- * Exception khi không tìm thấy agent
- */
 public class AgentNotFoundException extends RuntimeException {
     public AgentNotFoundException(String message) {
         super(message);

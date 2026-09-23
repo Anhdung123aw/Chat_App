@@ -11,10 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-/**
- * Kafka Consumer lắng nghe event chat.conversation.created
- * Tự động assign conversation cho agent phù hợp
- */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -23,11 +19,6 @@ public class    ConversationCreatedConsumer {
     private final AutoAssignmentService autoAssignmentService;
     private final SlaService slaService;
     private final ObjectMapper objectMapper;
-
-    /**
-     * Consume event chat.conversation.created
-     * Trigger auto assignment cho conversation mới
-     */
     @KafkaListener(
             topics = "chat.conversation.created",
             groupId = "chat-core-auto-assignment",

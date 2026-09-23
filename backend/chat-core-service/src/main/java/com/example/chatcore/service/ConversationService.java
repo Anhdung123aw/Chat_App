@@ -143,7 +143,15 @@ public class ConversationService {
         conversation.setStatus(ConversationStatus.CLOSED);
         conversation.setClosedAt(LocalDateTime.now());
 
-        publishEvent(conversationId, "chat.conversation.closed", Map.of("conversationId", conversationId));
+        java.util.Map<String, Object> payload = new java.util.HashMap<>();
+        payload.put("conversationId", conversationId);
+        payload.put("userId", conversation.getUserId());
+        if (conversation.getAssignedAgent() != null) {
+            payload.put("agentId", conversation.getAssignedAgent());
+        }
+        payload.put("newStatus", "CLOSED");
+        
+        publishEvent(conversationId, "chat.conversation.status-changed", payload);
 
         return conversation;
     }
